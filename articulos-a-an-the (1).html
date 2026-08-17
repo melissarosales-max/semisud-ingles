@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A, An, The — Quiz para principiantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #EAF4FF;
+    --card: #FFFFFF;
+    --ink: #1B2A41;
+    --ink-soft: #5B6B85;
+    --coral: #FF6B6B;
+    --yellow: #FFD166;
+    --green: #06D6A0;
+    --blue: #4D96FF;
+    --border: #D9E6F5;
+    --radius: 20px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 10% 15%, rgba(77,150,255,0.10) 0, transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(255,107,107,0.12) 0, transparent 40%);
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px 16px;
+  }
+  .app{ width:100%; max-width: 560px; }
+
+  h1{
+    font-family:'Fredoka', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    margin: 0 0 4px;
+    text-align:center;
+  }
+  .subtitle{
+    text-align:center;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+  }
+
+  .blocks{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom: 22px;
+  }
+  .blocks span{
+    font-family:'Fredoka', sans-serif;
+    font-weight:700;
+    font-size:1.1rem;
+    padding: 8px 14px;
+    border-radius: 12px;
+    color:#fff;
+  }
+  .blocks span:nth-child(1){ background: var(--coral); transform: rotate(-4deg); }
+  .blocks span:nth-child(2){ background: var(--blue); transform: rotate(3deg); }
+  .blocks span:nth-child(3){ background: var(--green); transform: rotate(-2deg); }
+
+  .card{
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: 0 12px 30px rgba(27,42,65,0.08);
+    border: 1px solid var(--border);
+  }
+
+  /* Start screen */
+  .rule{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #F5F9FF;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    line-height:1.45;
+  }
+  .rule b{ color: var(--blue); font-family:'Fredoka',sans-serif; }
+
+  button{
+    font-family:'Inter', sans-serif;
+    cursor:pointer;
+    border:none;
+  }
+  .btn-primary{
+    display:block;
+    width:100%;
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--ink);
+    color:#fff;
+    font-weight:600;
+    font-size:1rem;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn-primary:hover{ background:#2c3e5c; transform: translateY(-1px); }
+  .btn-primary:active{ transform: translateY(0); }
+
+  /* Quiz screen */
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom: 20px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    background:#EEF2F8;
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--green);
+    border-radius:6px;
+    width:0%;
+    transition: width .35s ease;
+  }
+  .progress-label{
+    font-size:0.8rem;
+    color: var(--ink-soft);
+    white-space:nowrap;
+    font-weight:600;
+  }
+
+  .question-num{
+    font-family:'Fredoka', sans-serif;
+    color: var(--blue);
+    font-size:0.9rem;
+    font-weight:600;
+    margin-bottom: 6px;
+  }
+  .question{
+    font-size: 1.35rem;
+    line-height:1.5;
+    margin: 0 0 22px;
+  }
+  .question .gap{
+    display:inline-block;
+    min-width: 54px;
+    border-bottom: 3px solid var(--coral);
+    text-align:center;
+  }
+
+  .options{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .opt{
+    padding: 16px 8px;
+    border-radius: 14px;
+    background: #F5F9FF;
+    border: 2px solid var(--border);
+    font-family:'Fredoka', sans-serif;
+    font-size: 1.15rem;
+    font-weight:600;
+    color: var(--ink);
+    transition: all .12s ease;
+  }
+  .opt:hover:not(:disabled){ border-color: var(--blue); transform: translateY(-2px); }
+  .opt:disabled{ cursor:default; }
+  .opt.correct{ background: rgba(6,214,160,0.18); border-color: var(--green); color:#04785c; }
+  .opt.wrong{ background: rgba(255,107,107,0.18); border-color: var(--coral); color:#b53a3a; }
+
+  .feedback{
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    line-height:1.45;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background: rgba(6,214,160,0.12); color:#04785c; }
+  .feedback.bad{ background: rgba(255,107,107,0.12); color:#b53a3a; }
+
+  .next-row{ margin-top:16px; display:none; }
+  .next-row.show{ display:block; }
+
+  /* Result screen */
+  .result{ text-align:center; }
+  .result .score{
+    font-family:'Fredoka', sans-serif;
+    font-size: 3rem;
+    color: var(--blue);
+    margin: 6px 0;
+  }
+  .result .msg{ color: var(--ink-soft); margin-bottom: 6px; }
+
+  .hidden{ display:none; }
+
+  .field-label{
+    display:block;
+    font-weight:600;
+    font-size:0.9rem;
+    margin-bottom:6px;
+    color: var(--ink-soft);
+  }
+  input[type="email"], input[type="text"]{
+    width:100%;
+    padding: 13px 14px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    font-family:'Inter', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    outline:none;
+  }
+  input[type="email"]:focus, input[type="text"]:focus{ border-color: var(--blue); }
+  .error-text{
+    color: var(--coral);
+    font-size: 0.85rem;
+    margin: -6px 0 12px;
+    display:none;
+  }
+  .error-text.show{ display:block; }
+
+  .sending-note{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+
+  @media (max-width:380px){
+    .options{ grid-template-columns: repeat(3, 1fr); gap:8px; }
+    .opt{ font-size:1rem; padding:12px 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>A, An, The</h1>
+  <p class="subtitle">Practica los artículos en inglés — nivel principiante</p>
+  <div class="blocks"><span>A</span><span>AN</span><span>THE</span></div>
+
+  <div class="card">
+
+    <!-- EMAIL SCREEN -->
+    <div id="email-screen">
+      <label class="field-label" for="student-name">Tu nombre</label>
+      <input type="text" id="student-name" placeholder="Ej. Ana Torres">
+      <div class="error-text" id="name-error">Escribe tu nombre.</div>
+
+      <label class="field-label" for="student-email">Tu correo</label>
+      <input type="email" id="student-email" placeholder="Ej. ana@correo.com">
+      <div class="error-text" id="email-error">Escribe un correo válido.</div>
+
+      <button class="btn-primary" id="continue-btn">Continuar</button>
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="hidden">
+      <div class="rule"><b>a</b> &nbsp;→ una cosa, empieza con sonido de consonante. <i>a dog</i></div>
+      <div class="rule"><b>an</b> → una cosa, empieza con sonido de vocal (a, e, i, o, u). <i>an apple</i></div>
+      <div class="rule"><b>the</b> → una cosa específica, o solo hay una. <i>the sun</i></div>
+      <button class="btn-primary" id="start-btn">Empezar el examen</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden">
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label">1 / 20</div>
+      </div>
+      <div class="question-num" id="score-label">Puntos: 0</div>
+      <p class="question" id="question-text"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="next-row" id="next-row">
+        <button class="btn-primary" id="next-btn">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden result">
+      <p class="question-num" style="text-align:center;">¡Terminaste!</p>
+      <div class="score" id="final-score">0 / 20</div>
+      <p class="msg" id="final-msg"></p>
+      <p class="sending-note" id="sending-note">Enviando tus resultados...</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  { text: "I have ___ cat.", answer: "a", tip: "cat empieza con sonido de consonante → a" },
+  { text: "She has ___ apple.", answer: "an", tip: "apple empieza con sonido de vocal → an" },
+  { text: "___ sun is hot.", answer: "the", tip: "solo hay un sol → the" },
+  { text: "He is ___ engineer.", answer: "an", tip: "engineer empieza con sonido de vocal → an" },
+  { text: "I need ___ pen.", answer: "a", tip: "pen empieza con sonido de consonante → a" },
+  { text: "This is ___ orange.", answer: "an", tip: "orange empieza con sonido de vocal → an" },
+  { text: "___ sky is blue.", answer: "the", tip: "solo hay un cielo → the" },
+  { text: "She is ___ doctor.", answer: "a", tip: "doctor empieza con sonido de consonante → a" },
+  { text: "I see ___ elephant.", answer: "an", tip: "elephant empieza con sonido de vocal → an" },
+  { text: "Give me ___ book, please.", answer: "a", tip: "book empieza con sonido de consonante → a" },
+  { text: "Close ___ door, please.", answer: "the", tip: "hablamos de una puerta específica → the" },
+  { text: "I want ___ umbrella.", answer: "an", tip: "umbrella empieza con sonido de vocal → an" },
+  { text: "He has ___ car.", answer: "a", tip: "car empieza con sonido de consonante → a" },
+  { text: "Look at ___ moon!", answer: "the", tip: "solo hay una luna → the" },
+  { text: "She eats ___ banana every day.", answer: "a", tip: "banana empieza con sonido de consonante → a" },
+  { text: "I have ___ idea.", answer: "an", tip: "idea empieza con sonido de vocal → an" },
+  { text: "___ teacher in my class is kind.", answer: "the", tip: "hablamos de un profesor específico → the" },
+  { text: "I saw ___ ant on the table.", answer: "an", tip: "ant empieza con sonido de vocal → an" },
+  { text: "He wears ___ hat every winter.", answer: "a", tip: "hat empieza con sonido de consonante → a" },
+  { text: "Open ___ window, please.", answer: "the", tip: "hablamos de una ventana específica → the" },
+];
+
+const OPTIONS = ["a", "an", "the"];
+
+// ⚠️ Pega aquí la URL de tu Google Apps Script (termina en /exec)
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxhE34xS5bTY2L1rR1HtL-4gGtvA6_F20mCMx9BtxiUvpDn6KUnTACzAxhr6m9e2hDj/exec";
+
+let order = [];
+let current = 0;
+let score = 0;
+let locked = false;
+let studentName = '';
+let studentEmail = '';
+let answerLog = [];
+
+const emailScreen = document.getElementById('email-screen');
+const startScreen = document.getElementById('start-screen');
+const quizScreen = document.getElementById('quiz-screen');
+const resultScreen = document.getElementById('result-screen');
+const questionText = document.getElementById('question-text');
+const optionsEl = document.getElementById('options');
+const feedbackEl = document.getElementById('feedback');
+const nextRow = document.getElementById('next-row');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const scoreLabel = document.getElementById('score-label');
+const finalScore = document.getElementById('final-score');
+const finalMsg = document.getElementById('final-msg');
+const sendingNote = document.getElementById('sending-note');
+const nameInput = document.getElementById('student-name');
+const emailInput = document.getElementById('student-email');
+const nameError = document.getElementById('name-error');
+const emailError = document.getElementById('email-error');
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function isValidEmail(value){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function handleContinue(){
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  let ok = true;
+
+  if(name.length === 0){
+    nameError.classList.add('show');
+    ok = false;
+  } else {
+    nameError.classList.remove('show');
+  }
+
+  if(!isValidEmail(email)){
+    emailError.classList.add('show');
+    ok = false;
+  } else {
+    emailError.classList.remove('show');
+  }
+
+  if(!ok) return;
+
+  studentName = name;
+  studentEmail = email;
+  emailScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+}
+
+function startQuiz(){
+  order = shuffle(QUESTIONS);
+  current = 0;
+  score = 0;
+  answerLog = [];
+  startScreen.classList.add('hidden');
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  locked = false;
+  const q = order[current];
+  questionText.innerHTML = q.text.replace('___', '<span class="gap">___</span>');
+  optionsEl.innerHTML = '';
+  feedbackEl.className = 'feedback';
+  feedbackEl.textContent = '';
+  nextRow.classList.remove('show');
+
+  shuffle(OPTIONS).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(opt, btn));
+    optionsEl.appendChild(btn);
+  });
+
+  progressFill.style.width = ((current) / order.length * 100) + '%';
+  progressLabel.textContent = (current + 1) + ' / ' + order.length;
+  scoreLabel.textContent = 'Puntos: ' + score;
+}
+
+function selectAnswer(selected, btnEl){
+  if(locked) return;
+  locked = true;
+  const q = order[current];
+  const correct = selected === q.answer;
+  if(correct) score++;
+
+  answerLog.push({
+    question: q.text,
+    selected: selected,
+    correct_answer: q.answer,
+    is_correct: correct
+  });
+
+  document.querySelectorAll('.opt').forEach(btn => {
+    btn.disabled = true;
+    if(btn.textContent === q.answer) btn.classList.add('correct');
+    else if(btn === btnEl) btn.classList.add('wrong');
+  });
+
+  feedbackEl.classList.add('show', correct ? 'ok' : 'bad');
+  feedbackEl.textContent = (correct ? '¡Correcto! ' : 'Casi. La respuesta es "' + q.answer + '". ') + q.tip + '.';
+  scoreLabel.textContent = 'Puntos: ' + score;
+  nextRow.classList.add('show');
+}
+
+function nextQuestion(){
+  current++;
+  if(current >= order.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  finalScore.textContent = score + ' / ' + order.length;
+  let msg = '';
+  if(score === order.length) msg = '¡Perfecto! Dominas a, an y the.';
+  else if(score >= order.length * 0.7) msg = '¡Muy bien! Sigue practicando.';
+  else msg = 'Buen intento. Repasa las reglas.';
+  finalMsg.textContent = msg;
+  sendResults();
+}
+
+function sendResults(){
+  if(!SCRIPT_URL || SCRIPT_URL.indexOf('PEGA_AQUI') !== -1){
+    sendingNote.textContent = 'Nota: aún no se configuró el envío automático de resultados.';
+    return;
+  }
+
+  const payload = {
+    name: studentName,
+    email: studentEmail,
+    score: score,
+    total: order.length,
+    answers: answerLog
+  };
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    sendingNote.textContent = 'Tus resultados fueron enviados a tu profesor.';
+  }).catch(() => {
+    sendingNote.textContent = 'No se pudo enviar tu resultado. Avisa a tu profesor.';
+  });
+}
+
+document.getElementById('continue-btn').addEventListener('click', handleContinue);
+document.getElementById('start-btn').addEventListener('click', startQuiz);
+document.getElementById('next-btn').addEventListener('click', nextQuestion);
+</script>
+</body>
+</html>
