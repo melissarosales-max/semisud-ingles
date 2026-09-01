@@ -241,36 +241,6 @@
   @media (max-width:380px){
     .opt{ font-size:0.92rem; padding:12px 12px; }
   }
-
-  /* Review screen */
-  .review-list{
-    text-align:left;
-    margin-top: 18px;
-    max-height: 380px;
-    overflow-y:auto;
-    padding-right: 4px;
-  }
-  .review-item{
-    padding: 12px 14px;
-    border-radius: 14px;
-    margin-bottom: 10px;
-    font-size: 0.88rem;
-    line-height:1.5;
-    border: 2px solid var(--border);
-  }
-  .review-item.ok{ border-color: var(--green); background: rgba(6,214,160,0.07); }
-  .review-item.bad{ border-color: var(--coral); background: rgba(255,107,107,0.07); }
-  .review-item .rq{ font-weight:700; margin-bottom:4px; }
-  .review-item .ra{ color: var(--ink-soft); }
-  .review-item .ra b{ color: var(--ink); }
-  .review-toggle{
-    margin-top: 14px;
-    background: none;
-    color: var(--blue);
-    font-weight:600;
-    font-size:0.9rem;
-    padding: 8px;
-  }
 </style>
 </head>
 <body>
@@ -323,8 +293,6 @@
       <div class="score" id="final-score">0 / 20</div>
       <p class="msg" id="final-msg"></p>
       <p class="sending-note" id="sending-note">Enviando tus resultados...</p>
-      <button class="btn-primary review-toggle" id="review-toggle">Ver mis respuestas</button>
-      <div class="review-list hidden" id="review-list"></div>
     </div>
 
   </div>
@@ -425,8 +393,6 @@ const nameInput = document.getElementById('student-name');
 const emailInput = document.getElementById('student-email');
 const nameError = document.getElementById('name-error');
 const emailError = document.getElementById('email-error');
-const reviewToggle = document.getElementById('review-toggle');
-const reviewList = document.getElementById('review-list');
 
 function shuffle(arr){
   const a = arr.slice();
@@ -473,9 +439,6 @@ function startQuiz(){
   current = 0;
   score = 0;
   answerLog = [];
-  reviewList.classList.add('hidden');
-  reviewList.innerHTML = '';
-  reviewToggle.textContent = 'Ver mis respuestas';
   startScreen.classList.add('hidden');
   resultScreen.classList.add('hidden');
   quizScreen.classList.remove('hidden');
@@ -553,22 +516,7 @@ function showResult(){
   else if(score >= order.length * 0.7) msg = '¡Muy bien! Sigue practicando.';
   else msg = 'Buen intento. Repasa las reglas.';
   finalMsg.textContent = msg;
-  buildReview();
   sendResults();
-}
-
-function buildReview(){
-  reviewList.innerHTML = '';
-  answerLog.forEach((a, i) => {
-    const item = document.createElement('div');
-    item.className = 'review-item ' + (a.is_correct ? 'ok' : 'bad');
-    item.innerHTML =
-      '<div class="rq">' + (i + 1) + '. ' + a.question + '</div>' +
-      '<div class="ra">Tu respuesta: <b>' + a.selected + '</b>' +
-      (a.is_correct ? '' : ' — Correcta: <b>' + a.correct_answer + '</b>') +
-      '</div>';
-    reviewList.appendChild(item);
-  });
 }
 
 function sendResults(){
@@ -596,11 +544,6 @@ function sendResults(){
     sendingNote.textContent = 'No se pudo enviar tu resultado. Avisa a tu profesor.';
   });
 }
-
-reviewToggle.addEventListener('click', () => {
-  const isHidden = reviewList.classList.toggle('hidden');
-  reviewToggle.textContent = isHidden ? 'Ver mis respuestas' : 'Ocultar mis respuestas';
-});
 
 document.getElementById('continue-btn').addEventListener('click', handleContinue);
 document.getElementById('start-btn').addEventListener('click', startQuiz);
