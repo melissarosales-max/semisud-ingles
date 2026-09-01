@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A, An, The — Quiz para principiantes</title>
+<title>Examen Final de Inglés I — Semisud</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -158,18 +158,19 @@
 
   .options{
     display:grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 10px;
   }
   .opt{
-    padding: 16px 8px;
+    padding: 14px 16px;
     border-radius: 14px;
     background: #F5F9FF;
     border: 2px solid var(--border);
-    font-family:'Fredoka', sans-serif;
-    font-size: 1.15rem;
+    font-family:'Inter', sans-serif;
+    font-size: 1rem;
     font-weight:600;
     color: var(--ink);
+    text-align:left;
     transition: all .12s ease;
   }
   .opt:hover:not(:disabled){ border-color: var(--blue); transform: translateY(-2px); }
@@ -238,37 +239,66 @@
   }
 
   @media (max-width:380px){
-    .options{ grid-template-columns: repeat(3, 1fr); gap:8px; }
-    .opt{ font-size:1rem; padding:12px 4px; }
+    .opt{ font-size:0.92rem; padding:12px 12px; }
+  }
+
+  /* Review screen */
+  .review-list{
+    text-align:left;
+    margin-top: 18px;
+    max-height: 380px;
+    overflow-y:auto;
+    padding-right: 4px;
+  }
+  .review-item{
+    padding: 12px 14px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    font-size: 0.88rem;
+    line-height:1.5;
+    border: 2px solid var(--border);
+  }
+  .review-item.ok{ border-color: var(--green); background: rgba(6,214,160,0.07); }
+  .review-item.bad{ border-color: var(--coral); background: rgba(255,107,107,0.07); }
+  .review-item .rq{ font-weight:700; margin-bottom:4px; }
+  .review-item .ra{ color: var(--ink-soft); }
+  .review-item .ra b{ color: var(--ink); }
+  .review-toggle{
+    margin-top: 14px;
+    background: none;
+    color: var(--blue);
+    font-weight:600;
+    font-size:0.9rem;
+    padding: 8px;
   }
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>A, An, The</h1>
-  <p class="subtitle">Practica los artículos en inglés — nivel principiante</p>
-  <div class="blocks"><span>A</span><span>AN</span><span>THE</span></div>
+  <h1>Examen Final de Inglés I</h1>
+  <p class="subtitle">20 preguntas al azar — nivel básico</p>
+  <div class="blocks"><span>ABC</span><span>123</span><span>GO</span></div>
 
   <div class="card">
 
     <!-- EMAIL SCREEN -->
     <div id="email-screen">
-      <label class="field-label" for="student-name">Tu nombre</label>
+      <label class="field-label" for="student-name">Tu nombre y apellido</label>
       <input type="text" id="student-name" placeholder="Ej. Ana Torres">
-      <div class="error-text" id="name-error">Escribe tu nombre.</div>
+      <div class="error-text" id="name-error">Escribe tu nombre y apellido.</div>
 
       <label class="field-label" for="student-email">Tu correo</label>
       <input type="email" id="student-email" placeholder="Ej. ana@correo.com">
       <div class="error-text" id="email-error">Escribe un correo válido.</div>
-
       <button class="btn-primary" id="continue-btn">Continuar</button>
+      <h1>Teacher: Melissa Rosales</h1>
     </div>
 
     <!-- START SCREEN -->
     <div id="start-screen" class="hidden">
-      <div class="rule"><b>a</b> &nbsp;→ una cosa, empieza con sonido de consonante. <i>a dog</i></div>
-      <div class="rule"><b>an</b> → una cosa, empieza con sonido de vocal (a, e, i, o, u). <i>an apple</i></div>
-      <div class="rule"><b>the</b> → una cosa específica, o solo hay una. <i>the sun</i></div>
+      <div class="rule">📋 El examen tiene <b>20 preguntas</b>, elegidas al azar de un banco más grande.</div>
+      <div class="rule">✅ Cada pregunta tiene una sola respuesta correcta.</div>
+      <div class="rule">📊 Al terminar, verás tu calificación y una revisión de qué preguntas acertaste y cuáles fallaste.</div>
       <button class="btn-primary" id="start-btn">Empezar el examen</button>
     </div>
 
@@ -293,36 +323,78 @@
       <div class="score" id="final-score">0 / 20</div>
       <p class="msg" id="final-msg"></p>
       <p class="sending-note" id="sending-note">Enviando tus resultados...</p>
+      <button class="btn-primary review-toggle" id="review-toggle">Ver mis respuestas</button>
+      <div class="review-list hidden" id="review-list"></div>
     </div>
 
   </div>
 </div>
 
 <script>
-const QUESTIONS = [
-  { text: "I have ___ cat.", answer: "a", tip: "cat empieza con sonido de consonante → a" },
-  { text: "She has ___ apple.", answer: "an", tip: "apple empieza con sonido de vocal → an" },
-  { text: "___ sun is hot.", answer: "the", tip: "solo hay un sol → the" },
-  { text: "He is ___ engineer.", answer: "an", tip: "engineer empieza con sonido de vocal → an" },
-  { text: "I need ___ pen.", answer: "a", tip: "pen empieza con sonido de consonante → a" },
-  { text: "This is ___ orange.", answer: "an", tip: "orange empieza con sonido de vocal → an" },
-  { text: "___ sky is blue.", answer: "the", tip: "solo hay un cielo → the" },
-  { text: "She is ___ doctor.", answer: "a", tip: "doctor empieza con sonido de consonante → a" },
-  { text: "I see ___ elephant.", answer: "an", tip: "elephant empieza con sonido de vocal → an" },
-  { text: "Give me ___ book, please.", answer: "a", tip: "book empieza con sonido de consonante → a" },
-  { text: "Close ___ door, please.", answer: "the", tip: "hablamos de una puerta específica → the" },
-  { text: "I want ___ umbrella.", answer: "an", tip: "umbrella empieza con sonido de vocal → an" },
-  { text: "He has ___ car.", answer: "a", tip: "car empieza con sonido de consonante → a" },
-  { text: "Look at ___ moon!", answer: "the", tip: "solo hay una luna → the" },
-  { text: "She eats ___ banana every day.", answer: "a", tip: "banana empieza con sonido de consonante → a" },
-  { text: "I have ___ idea.", answer: "an", tip: "idea empieza con sonido de vocal → an" },
-  { text: "___ teacher in my class is kind.", answer: "the", tip: "hablamos de un profesor específico → the" },
-  { text: "I saw ___ ant on the table.", answer: "an", tip: "ant empieza con sonido de vocal → an" },
-  { text: "He wears ___ hat every winter.", answer: "a", tip: "hat empieza con sonido de consonante → a" },
-  { text: "Open ___ window, please.", answer: "the", tip: "hablamos de una ventana específica → the" },
+// Banco de 58 preguntas (todas las que traía el documento con clave de respuesta).
+// options[correct] es el índice (0-based) de la respuesta correcta dentro de "options".
+const QUESTION_BANK = [
+  { q: "¿Cómo se dice \"Buenos días\" en inglés?", options: ["Buenas tardes","Buenas noches","Good morning","Good afternoon"], correct: 2 },
+  { q: "¿Cuál es la respuesta correcta a \"How are you?\"", options: ["My name is John","I am fine, thank you","See you later","Good morning"], correct: 1 },
+  { q: "\"Nice to meet you\" se usa cuando:", options: ["Te despides","Conoces a alguien por primera vez","Pides direcciones","Das las gracias"], correct: 1 },
+  { q: "¿Qué frase significa \"Hasta luego\"?", options: ["See you later","Good morning","How are you?","Nice to meet you"], correct: 0 },
+  { q: "\"Excuse me\" en español equivale a:", options: ["Gracias","Lo siento","Permiso / Disculpe","Buenas noches"], correct: 2 },
+  { q: "\"Good evening\" se usa:", options: ["Por la mañana","Por la noche antes de dormir","Al atardecer / por la tarde-noche","Al mediodía"], correct: 2 },
+  { q: "¿Cómo se dice el número 13 en inglés?", options: ["Thirty","Three","Thirteen","Fourthteen"], correct: 2 },
+  { q: "¿Cómo se dice \"80\" en inglés?", options: ["Eighteen","Eighty","Eight","Eightyteen"], correct: 1 },
+  { q: "¿Cuál de estos es el número 15?", options: ["Fifty","Fifteen","Five","Fiftyteen"], correct: 1 },
+  { q: "\"I am twenty-eight years old\" significa:", options: ["Tengo 20 años","Tengo 28 años","Tengo 18 años","Tengo 38 años"], correct: 1 },
+  { q: "¿Cuál es el número que sigue después de \"nineteen\"?", options: ["Twenty","Thirty","Twenty one","Twelve"], correct: 0 },
+  { q: "\"What is your favorite color?\" La respuesta correcta a esta pregunta es:", options: ["My favorite color is blue","I like color","Color is favorite","I am blue"], correct: 0 },
+  { q: "¿Cuál de estos es un color en inglés?", options: ["Verde","Azul","Green","Rojo"], correct: 2 },
+  { q: "¿Cómo se dice \"Enero\" en inglés?", options: ["February","January","March","April"], correct: 1 },
+  { q: "¿Qué mes es \"March\"?", options: ["Marzo","Mayo","Junio","Julio"], correct: 0 },
+  { q: "¿Cuál es correcto?", options: ["A apple","An apple","A - apple","Apple a"], correct: 1 },
+  { q: "¿Qué palabra necesita \"an\" antes?", options: ["Chair","Table","Orange","Computer"], correct: 2 },
+  { q: "¿Cuál es el plural de \"city\"?", options: ["Citys","Citie","Cities","Cityes"], correct: 2 },
+  { q: "¿Cuál es el plural de \"box\"?", options: ["Boxs","Boxes","Boxies","Box"], correct: 1 },
+  { q: "¿Cuál es el plural de \"man\"?", options: ["Mans","Men","Manes","Mens"], correct: 1 },
+  { q: "¿Cuál es la conjugación correcta para \"I\" con el verbo \"to be\" en presente?", options: ["I are","I is","I am","I be"], correct: 2 },
+  { q: "Completa: \"She ___ a teacher\"", options: ["are","am","is","were"], correct: 2 },
+  { q: "El pasado de \"to be\" para \"They\" es:", options: ["Was","Were","Are","Is"], correct: 1 },
+  { q: "\"Mañana, yo ___ en casa\" - futuro de \"to be\":", options: ["was","am","will be","were"], correct: 2 },
+  { q: "¿Qué oración es correcta?", options: ["He are from Mexico","He is from Mexico","He am from Mexico"], correct: 1 },
+  { q: "\"Ellas son mis primas\" en inglés es:", options: ["They are my cousins","They is my cousins","They am my cousins","They were my cousins"], correct: 0 },
+  { q: "La contracción \"I'm\" significa:", options: ["I have","I will","I am","I was"], correct: 2 },
+  { q: "\"He ___ a new car\" - presente de \"to have\":", options: ["Have","Has","Had","Will have"], correct: 1 },
+  { q: "El pasado de \"have\" para todos los sujetos es:", options: ["Have","Has","Had","Will have"], correct: 2 },
+  { q: "\"They ___ a big house\" — completa con el futuro del verbo have:", options: ["have","has","had","will have"], correct: 3 },
+  { q: "El pasado de \"walk\" (caminar) es:", options: ["Walk","Walked","Walking","Will walk"], correct: 1 },
+  { q: "El pasado de \"go\" (ir) es:", options: ["Goed","Went","Gone","Will go"], correct: 1 },
+  { q: "El pasado de \"sing\" (cantar) es:", options: ["Singed","Sang","Song","Sung"], correct: 1 },
+  { q: "El futuro de \"eat\" (comer) es:", options: ["Ate","Eated","Will eat","Eating"], correct: 2 },
+  { q: "¿Cuál de estos verbos es irregular?", options: ["Walk","Talk","Go","Want"], correct: 2 },
+  { q: "El pasado de \"bring\" (traer) es:", options: ["Bringed","Brought","Broughted","Bring"], correct: 1 },
+  { q: "El pasado de \"drink\" (beber) es:", options: ["Drink","Drank","Drinked","Will drink"], correct: 1 },
+  { q: "El pasado de \"give\" (dar) es:", options: ["Gived","Gave","Given","Will give"], correct: 1 },
+  { q: "El pasado de \"come\" (venir) es:", options: ["Comed","Came","Come","Will come"], correct: 1 },
+  { q: "\"___ is your name?\" - ¿Qué palabra completa la pregunta?", options: ["Where","What","Who","How"], correct: 1 },
+  { q: "\"___ are you from?\" - Palabra para preguntar por lugar:", options: ["What","Who","Where","When"], correct: 2 },
+  { q: "\"___ is your friend?\" - Palabra para preguntar por persona:", options: ["Who","What","Where","How"], correct: 0 },
+  { q: "\"How many\" pregunta por:", options: ["Duración","Una cantidad contable (número)","Precio / monto","Lugar"], correct: 1 },
+  { q: "\"How much\" pregunta por:", options: ["Un precio o cantidad no contable","Una persona","Un lugar","Una cantidad contable"], correct: 0 },
+  { q: "\"The ___ dog\" - si el perro es pequeño, se dice:", options: ["Small","Big","Large","Tall"], correct: 0 },
+  { q: "Lo opuesto a \"happy\" es:", options: ["Sad","Ugly","Pretty","Brave"], correct: 0 },
+  { q: "¿Qué adjetivo describe temperatura (frío)?", options: ["Brave","Funny","Cold","Young"], correct: 2 },
+  { q: "Lo opuesto a \"young\" es:", options: ["Old","New","Tall","Short"], correct: 0 },
+  { q: "\"I will study English ___\" - adverbio para \"mañana\":", options: ["Yesterday","Today","Tomorrow","Now"], correct: 2 },
+  { q: "En la oración \"I love my dog\", \"my\" expresa:", options: ["El que hace la acción (sujeto)","El que recibe la acción (objeto)","Posesión (dueño)","Lugar"], correct: 2 },
+  { q: "En \"She gives him a book\", \"him\" es:", options: ["El que realiza la acción","El que recibe la acción","El adjetivo","El verbo"], correct: 1 },
+  { q: "\"Chicken\" en español es:", options: ["Res","Pollo","Cerdo","Pescado"], correct: 1 },
+  { q: "\"Cocina\" en inglés es:", options: ["Living room","Bathroom","Kitchen","Bedroom"], correct: 2 },
+  { q: "¿Cómo se dice \"dormitorio\" en inglés?", options: ["Living room","Bedroom","Bathroom","Kitchen"], correct: 1 },
+  { q: "¿Qué significa \"tomato\" en español?", options: ["Zanahoria","Cebolla","Tomate","Lechuga"], correct: 2 },
+  { q: "¿Cómo se llama al desayuno en inglés?", options: ["Breakfast","Lunch","Dinner","Snack"], correct: 0 },
+  { q: "¿Cómo se dice \"martes\" en inglés?", options: ["Monday","Wednesday","Thursday","Tuesday"], correct: 3 },
+  { q: "¿En qué parte de la casa sueles comer la cena (dinner)?", options: ["Garage","Garden","Dining room","Balcony"], correct: 2 },
 ];
 
-const OPTIONS = ["a", "an", "the"];
+const TOTAL_QUESTIONS = 20;
 
 // ⚠️ Pega aquí la URL de tu Google Apps Script (termina en /exec)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkgj_te3OqLvwOCCi5I4orEWyu2dfiagG-muh_82C-NrSOZ6wdfo4p4hmqwXFZmxhOJw/exec";
@@ -353,6 +425,8 @@ const nameInput = document.getElementById('student-name');
 const emailInput = document.getElementById('student-email');
 const nameError = document.getElementById('name-error');
 const emailError = document.getElementById('email-error');
+const reviewToggle = document.getElementById('review-toggle');
+const reviewList = document.getElementById('review-list');
 
 function shuffle(arr){
   const a = arr.slice();
@@ -395,10 +469,13 @@ function handleContinue(){
 }
 
 function startQuiz(){
-  order = shuffle(QUESTIONS);
+  order = shuffle(QUESTION_BANK).slice(0, TOTAL_QUESTIONS);
   current = 0;
   score = 0;
   answerLog = [];
+  reviewList.classList.add('hidden');
+  reviewList.innerHTML = '';
+  reviewToggle.textContent = 'Ver mis respuestas';
   startScreen.classList.add('hidden');
   resultScreen.classList.add('hidden');
   quizScreen.classList.remove('hidden');
@@ -408,17 +485,22 @@ function startQuiz(){
 function renderQuestion(){
   locked = false;
   const q = order[current];
-  questionText.innerHTML = q.text.replace('___', '<span class="gap">___</span>');
+  questionText.innerHTML = q.q.includes('___')
+    ? q.q.replace('___', '<span class="gap">___</span>')
+    : q.q;
   optionsEl.innerHTML = '';
   feedbackEl.className = 'feedback';
   feedbackEl.textContent = '';
   nextRow.classList.remove('show');
 
-  shuffle(OPTIONS).forEach(opt => {
+  const correctText = q.options[q.correct];
+  const shuffledOpts = shuffle(q.options);
+
+  shuffledOpts.forEach(optText => {
     const btn = document.createElement('button');
     btn.className = 'opt';
-    btn.textContent = opt;
-    btn.addEventListener('click', () => selectAnswer(opt, btn));
+    btn.textContent = optText;
+    btn.addEventListener('click', () => selectAnswer(optText, correctText, btn));
     optionsEl.appendChild(btn);
   });
 
@@ -427,28 +509,28 @@ function renderQuestion(){
   scoreLabel.textContent = 'Puntos: ' + score;
 }
 
-function selectAnswer(selected, btnEl){
+function selectAnswer(selected, correctText, btnEl){
   if(locked) return;
   locked = true;
   const q = order[current];
-  const correct = selected === q.answer;
+  const correct = selected === correctText;
   if(correct) score++;
 
   answerLog.push({
-    question: q.text,
+    question: q.q,
     selected: selected,
-    correct_answer: q.answer,
+    correct_answer: correctText,
     is_correct: correct
   });
 
   document.querySelectorAll('.opt').forEach(btn => {
     btn.disabled = true;
-    if(btn.textContent === q.answer) btn.classList.add('correct');
+    if(btn.textContent === correctText) btn.classList.add('correct');
     else if(btn === btnEl) btn.classList.add('wrong');
   });
 
   feedbackEl.classList.add('show', correct ? 'ok' : 'bad');
-  feedbackEl.textContent = (correct ? '¡Correcto! ' : 'Casi. La respuesta es "' + q.answer + '". ') + q.tip + '.';
+  feedbackEl.textContent = correct ? '¡Correcto!' : 'Incorrecto. La respuesta correcta es: "' + correctText + '".';
   scoreLabel.textContent = 'Puntos: ' + score;
   nextRow.classList.add('show');
 }
@@ -471,7 +553,22 @@ function showResult(){
   else if(score >= order.length * 0.7) msg = '¡Muy bien! Sigue practicando.';
   else msg = 'Buen intento. Repasa las reglas.';
   finalMsg.textContent = msg;
+  buildReview();
   sendResults();
+}
+
+function buildReview(){
+  reviewList.innerHTML = '';
+  answerLog.forEach((a, i) => {
+    const item = document.createElement('div');
+    item.className = 'review-item ' + (a.is_correct ? 'ok' : 'bad');
+    item.innerHTML =
+      '<div class="rq">' + (i + 1) + '. ' + a.question + '</div>' +
+      '<div class="ra">Tu respuesta: <b>' + a.selected + '</b>' +
+      (a.is_correct ? '' : ' — Correcta: <b>' + a.correct_answer + '</b>') +
+      '</div>';
+    reviewList.appendChild(item);
+  });
 }
 
 function sendResults(){
@@ -499,6 +596,11 @@ function sendResults(){
     sendingNote.textContent = 'No se pudo enviar tu resultado. Avisa a tu profesor.';
   });
 }
+
+reviewToggle.addEventListener('click', () => {
+  const isHidden = reviewList.classList.toggle('hidden');
+  reviewToggle.textContent = isHidden ? 'Ver mis respuestas' : 'Ocultar mis respuestas';
+});
 
 document.getElementById('continue-btn').addEventListener('click', handleContinue);
 document.getElementById('start-btn').addEventListener('click', startQuiz);
