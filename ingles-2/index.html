@@ -152,7 +152,7 @@
   .question .gap{
     display:inline-block;
     min-width: 54px;
-    border-bottom: 3px solid var(--coral);
+    border-bottom: 3px solid var(--ink);
     text-align:center;
   }
 
@@ -435,9 +435,7 @@ function startQuiz(){
 function renderQuestion(){
   locked = false;
   const q = order[current];
-  questionText.innerHTML = q.q.includes('___')
-    ? q.q.replace('___', '<span class="gap">___</span>')
-    : q.q;
+  questionText.innerHTML = q.q.replace(/_{2,}/g, '<span class="gap">___</span>');
   optionsEl.innerHTML = '';
   feedbackEl.className = 'feedback';
   feedbackEl.textContent = '';
