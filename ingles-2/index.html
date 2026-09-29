@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen Final de Inglés II — Semisud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #EAF4FF;
+    --card: #FFFFFF;
+    --ink: #1B2A41;
+    --ink-soft: #5B6B85;
+    --coral: #FF6B6B;
+    --yellow: #FFD166;
+    --green: #06D6A0;
+    --blue: #4D96FF;
+    --border: #D9E6F5;
+    --radius: 20px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 10% 15%, rgba(77,150,255,0.10) 0, transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(255,107,107,0.12) 0, transparent 40%);
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px 16px;
+  }
+  .app{ width:100%; max-width: 560px; }
+
+  h1{
+    font-family:'Fredoka', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    margin: 0 0 4px;
+    text-align:center;
+  }
+  .subtitle{
+    text-align:center;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+  }
+
+  .blocks{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom: 22px;
+  }
+  .blocks span{
+    font-family:'Fredoka', sans-serif;
+    font-weight:700;
+    font-size:1.1rem;
+    padding: 8px 14px;
+    border-radius: 12px;
+    color:#fff;
+  }
+  .blocks span:nth-child(1){ background: var(--coral); transform: rotate(-4deg); }
+  .blocks span:nth-child(2){ background: var(--blue); transform: rotate(3deg); }
+  .blocks span:nth-child(3){ background: var(--green); transform: rotate(-2deg); }
+
+  .card{
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: 0 12px 30px rgba(27,42,65,0.08);
+    border: 1px solid var(--border);
+  }
+
+  /* Start screen */
+  .rule{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #F5F9FF;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    line-height:1.45;
+  }
+  .rule b{ color: var(--blue); font-family:'Fredoka',sans-serif; }
+
+  button{
+    font-family:'Inter', sans-serif;
+    cursor:pointer;
+    border:none;
+  }
+  .btn-primary{
+    display:block;
+    width:100%;
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--ink);
+    color:#fff;
+    font-weight:600;
+    font-size:1rem;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn-primary:hover{ background:#2c3e5c; transform: translateY(-1px); }
+  .btn-primary:active{ transform: translateY(0); }
+
+  /* Quiz screen */
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom: 20px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    background:#EEF2F8;
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--green);
+    border-radius:6px;
+    width:0%;
+    transition: width .35s ease;
+  }
+  .progress-label{
+    font-size:0.8rem;
+    color: var(--ink-soft);
+    white-space:nowrap;
+    font-weight:600;
+  }
+
+  .question-num{
+    font-family:'Fredoka', sans-serif;
+    color: var(--blue);
+    font-size:0.9rem;
+    font-weight:600;
+    margin-bottom: 6px;
+  }
+  .question{
+    font-size: 1.35rem;
+    line-height:1.5;
+    margin: 0 0 22px;
+  }
+  .question .gap{
+    display:inline-block;
+    min-width: 54px;
+    border-bottom: 3px solid var(--coral);
+    text-align:center;
+  }
+
+  .options{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .opt{
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #F5F9FF;
+    border: 2px solid var(--border);
+    font-family:'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight:600;
+    color: var(--ink);
+    text-align:left;
+    transition: all .12s ease;
+  }
+  .opt:hover:not(:disabled){ border-color: var(--blue); transform: translateY(-2px); }
+  .opt:disabled{ cursor:default; }
+  .opt.correct{ background: rgba(6,214,160,0.18); border-color: var(--green); color:#04785c; }
+  .opt.wrong{ background: rgba(255,107,107,0.18); border-color: var(--coral); color:#b53a3a; }
+
+  .feedback{
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    line-height:1.45;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background: rgba(6,214,160,0.12); color:#04785c; }
+  .feedback.bad{ background: rgba(255,107,107,0.12); color:#b53a3a; }
+
+  .next-row{ margin-top:16px; display:none; }
+  .next-row.show{ display:block; }
+
+  /* Result screen */
+  .result{ text-align:center; }
+  .result .score{
+    font-family:'Fredoka', sans-serif;
+    font-size: 3rem;
+    color: var(--blue);
+    margin: 6px 0;
+  }
+  .result .msg{ color: var(--ink-soft); margin-bottom: 6px; }
+
+  .hidden{ display:none; }
+
+  .field-label{
+    display:block;
+    font-weight:600;
+    font-size:0.9rem;
+    margin-bottom:6px;
+    color: var(--ink-soft);
+  }
+  input[type="email"], input[type="text"]{
+    width:100%;
+    padding: 13px 14px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    font-family:'Inter', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    outline:none;
+  }
+  input[type="email"]:focus, input[type="text"]:focus{ border-color: var(--blue); }
+  .error-text{
+    color: var(--coral);
+    font-size: 0.85rem;
+    margin: -6px 0 12px;
+    display:none;
+  }
+  .error-text.show{ display:block; }
+
+  .sending-note{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+
+  @media (max-width:380px){
+    .opt{ font-size:0.92rem; padding:12px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Examen Final de Inglés II</h1>
+  <p class="subtitle">20 preguntas al azar — nivel básico</p>
+  <div class="blocks"><span>ABC</span><span>123</span><span>GO</span></div>
+
+  <div class="card">
+
+    <!-- EMAIL SCREEN -->
+    <div id="email-screen">
+      <label class="field-label" for="student-name">Tu nombre y apellido</label>
+      <input type="text" id="student-name" placeholder="Ej. Ana Torres">
+      <div class="error-text" id="name-error">Escribe tu nombre y apellido.</div>
+
+      <label class="field-label" for="student-email">Tu correo</label>
+      <input type="email" id="student-email" placeholder="Ej. ana@correo.com">
+      <div class="error-text" id="email-error">Escribe un correo válido.</div>
+      <button class="btn-primary" id="continue-btn">Continuar</button>
+      <h1>Teacher: Melissa Rosales</h1>
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="hidden">
+      <div class="rule">📋 El examen tiene <b>20 preguntas</b>, elegidas al azar de un banco más grande.</div>
+      <div class="rule">✅ Cada pregunta tiene una sola respuesta correcta.</div>
+      <div class="rule">📊 Al terminar, verás tu calificación y una revisión de qué preguntas acertaste y cuáles fallaste.</div>
+      <button class="btn-primary" id="start-btn">Empezar el examen</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden">
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label">1 / 20</div>
+      </div>
+      <div class="question-num" id="score-label">Puntos: 0</div>
+      <p class="question" id="question-text"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="next-row" id="next-row">
+        <button class="btn-primary" id="next-btn">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden result">
+      <p class="question-num" style="text-align:center;">¡Terminaste!</p>
+      <div class="score" id="final-score">0 / 20</div>
+      <p class="msg" id="final-msg"></p>
+      <p class="sending-note" id="sending-note">Enviando tus resultados...</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Banco de 44 preguntas (Examen de Inglés II): verbos y conjugación, pronombres/posesivos,
+// preposiciones (in/on/at) y gramática/estructura de oraciones.
+// options[correct] es el índice (0-based) de la respuesta correcta dentro de "options".
+const QUESTION_BANK = [
+  { q: "Completa la oración en presente simple: \"She ______ about a new house.\" (Ella sueña con una casa nueva)", options: ["dream","dreams","dreamt"], correct: 1 },
+  { q: "¿Cuál es el pasado simple del verbo \"to meet\"?", options: ["meeted","met","meet"], correct: 1 },
+  { q: "Traduce: \"Yo sé la respuesta.\"", options: ["I know the answer.","I knows the answer.","I knew the answer."], correct: 0 },
+  { q: "Completa: \"They ______ (to read) the Bible every morning.\"", options: ["reads","read","readed"], correct: 1 },
+  { q: "¿Cuál es el futuro simple de \"to live\" para \"He\"?", options: ["He will live","He lives","He lived"], correct: 0 },
+  { q: "Completa con el pasado simple: \"We ______ (to hear) a beautiful song yesterday.\"", options: ["hear","heard","heared"], correct: 1 },
+  { q: "Conjuga el verbo \"to write\" en pasado simple para \"I\".", options: ["I writed","I wrote","I write"], correct: 1 },
+  { q: "Completa con el presente simple: \"The children ______ (to learn) very fast.\"", options: ["learn","learns","learned"], correct: 0 },
+  { q: "¿Cuál es el pasado simple de \"to drive\"?", options: ["drived","drove","driven"], correct: 1 },
+  { q: "Completa con el presente simple: \"He ______ (to take) the bus to work every day.\"", options: ["take","takes","took"], correct: 1 },
+  { q: "¿Cuál es la forma correcta del verbo \"to be\" en pasado para \"They\"?", options: ["was","were","are"], correct: 1 },
+  { q: "Completa: \"I ______ (to be) a good student.\"", options: ["is","are","am"], correct: 2 },
+  { q: "¿Cuál es el futuro simple de \"to be\" para \"She\"?", options: ["She will be","She is","She was"], correct: 0 },
+  { q: "Completa la oración negativa: \"He ______ (to be) a pastor.\"", options: ["is not","are not","am not"], correct: 0 },
+  { q: "¿Cuál es el pasado simple de \"to listen\"?", options: ["listen","listened","listent"], correct: 1 },
+  { q: "¿Qué reemplaza a \"my mother\" en la oración \"I love my mother\"? I love ____", options: ["I","she","her"], correct: 2 },
+  { q: "Completa: \"I like ______ house.\"", options: ["me","my","I"], correct: 1 },
+  { q: "Completa: \"______ (él) is my brother.\"", options: ["Him","His","He"], correct: 2 },
+  { q: "Completa: \"They pay ______.\" (Ellos nos pagan a nosotros)", options: ["we","our","us"], correct: 2 },
+  { q: "Completa: \"This is ______ family.\" (Esta es su familia)", options: ["they","them","their"], correct: 2 },
+  { q: "Completa: \"______ name is Peter.\" (Tu nombre es Peter)", options: ["You","Your","Yours"], correct: 1 },
+  { q: "Completa: \"My birthday is ______ July.\"", options: ["on","at","in"], correct: 2 },
+  { q: "Completa: \"The class starts ______ 9:00 AM.\"", options: ["on","at","in"], correct: 1 },
+  { q: "Completa: \"I will see you ______ Monday.\"", options: ["on","at","in"], correct: 0 },
+  { q: "Completa: \"The book is ______ the table.\"", options: ["in","on","at"], correct: 1 },
+  { q: "Completa: \"He is ______ the kitchen.\"", options: ["on","at","in"], correct: 2 },
+  { q: "Completa: \"We are ______ the bus.\"", options: ["in","on","at"], correct: 1 },
+  { q: "Completa: \"She is ______ work.\"", options: ["in","on","at"], correct: 2 },
+  { q: "Completa: \"I was born ______ 1990.\"", options: ["on","at","in"], correct: 2 },
+  { q: "Completa: \"The party is ______ my house.\"", options: ["on","at","in"], correct: 1 },
+  { q: "Completa: \"He is ______ the concert.\"", options: ["on","at","in"], correct: 1 },
+  { q: "Convierte a negativa: \"He is a father.\"", options: ["He not is a father.","He is not a father.","He is no a father."], correct: 1 },
+  { q: "Convierte a pregunta: \"We are friends.\"", options: ["We are friends?","Are we friends?","Friends we are?"], correct: 1 },
+  { q: "Convierte a negativa en pasado: \"I was a good student.\"", options: ["I was not a good student.","I not was a good student.","I no good student."], correct: 0 },
+  { q: "Convierte a pregunta en futuro: \"She will be a pastor.\"", options: ["She will be a pastor?","Will she be a pastor?","Will she a pastor?"], correct: 1 },
+  { q: "Elige la contracción correcta para \"I am not\".", options: ["I amn't","I'm not","I not'm"], correct: 1 },
+  { q: "¿Cuál es la contracción de \"They are\"?", options: ["They're","Their","There"], correct: 0 },
+  { q: "Completa con la conjunción adecuada: \"I want to play soccer, ______ I am tired.\" (Quiero jugar fútbol ____ estoy cansado)", options: ["and","but","because"], correct: 1 },
+  { q: "Completa: \"I will go to the doctor ______ I am sick.\" (Iré al doctor ____ estoy enfermo)", options: ["so","but","because"], correct: 2 },
+  { q: "Completa: \"I listen to music ______ my brother plays video games.\" (Escucho música mientras mi hermano juega video juegos)", options: ["while","because","but"], correct: 0 },
+  { q: "¿Cuál es el significado de la conjunción \"while\"?", options: ["porque","mientras","aunque"], correct: 1 },
+  { q: "¿Cuál es la contracción de \"He is not\"?", options: ["He's not","He isn't","Ambas son correctas"], correct: 2 },
+  { q: "Completa: \"I have a grey sweater ______ black pants.\" (Tengo un suéter gris ___ pantalones negros)", options: ["but","and","or"], correct: 1 },
+  { q: "¿Qué significa la conjunción \"until\"?", options: ["cuando","hasta","mientras"], correct: 1 },
+];
+
+const TOTAL_QUESTIONS = 20;
+
+// ⚠️ Pega aquí la URL de tu Google Apps Script (termina en /exec)
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQtFf_NWr9BphaOHP-HSzqPtOCJtZSskZRG1Kkn-Qqg2KdDAvI5jGBnH7r0gtwApiA/exec";
+
+let order = [];
+let current = 0;
+let score = 0;
+let locked = false;
+let studentName = '';
+let studentEmail = '';
+let answerLog = [];
+
+const emailScreen = document.getElementById('email-screen');
+const startScreen = document.getElementById('start-screen');
+const quizScreen = document.getElementById('quiz-screen');
+const resultScreen = document.getElementById('result-screen');
+const questionText = document.getElementById('question-text');
+const optionsEl = document.getElementById('options');
+const feedbackEl = document.getElementById('feedback');
+const nextRow = document.getElementById('next-row');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const scoreLabel = document.getElementById('score-label');
+const finalScore = document.getElementById('final-score');
+const finalMsg = document.getElementById('final-msg');
+const sendingNote = document.getElementById('sending-note');
+const nameInput = document.getElementById('student-name');
+const emailInput = document.getElementById('student-email');
+const nameError = document.getElementById('name-error');
+const emailError = document.getElementById('email-error');
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function isValidEmail(value){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function handleContinue(){
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  let ok = true;
+
+  if(name.length === 0){
+    nameError.classList.add('show');
+    ok = false;
+  } else {
+    nameError.classList.remove('show');
+  }
+
+  if(!isValidEmail(email)){
+    emailError.classList.add('show');
+    ok = false;
+  } else {
+    emailError.classList.remove('show');
+  }
+
+  if(!ok) return;
+
+  studentName = name;
+  studentEmail = email;
+  emailScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+}
+
+function startQuiz(){
+  order = shuffle(QUESTION_BANK).slice(0, TOTAL_QUESTIONS);
+  current = 0;
+  score = 0;
+  answerLog = [];
+  startScreen.classList.add('hidden');
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  locked = false;
+  const q = order[current];
+  questionText.innerHTML = q.q.includes('___')
+    ? q.q.replace('___', '<span class="gap">___</span>')
+    : q.q;
+  optionsEl.innerHTML = '';
+  feedbackEl.className = 'feedback';
+  feedbackEl.textContent = '';
+  nextRow.classList.remove('show');
+
+  const correctText = q.options[q.correct];
+  const shuffledOpts = shuffle(q.options);
+
+  shuffledOpts.forEach(optText => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = optText;
+    btn.addEventListener('click', () => selectAnswer(optText, correctText, btn));
+    optionsEl.appendChild(btn);
+  });
+
+  progressFill.style.width = ((current) / order.length * 100) + '%';
+  progressLabel.textContent = (current + 1) + ' / ' + order.length;
+  scoreLabel.textContent = 'Puntos: ' + score;
+}
+
+function selectAnswer(selected, correctText, btnEl){
+  if(locked) return;
+  locked = true;
+  const q = order[current];
+  const correct = selected === correctText;
+  if(correct) score++;
+
+  answerLog.push({
+    question: q.q,
+    selected: selected,
+    correct_answer: correctText,
+    is_correct: correct
+  });
+
+  document.querySelectorAll('.opt').forEach(btn => {
+    btn.disabled = true;
+    if(btn.textContent === correctText) btn.classList.add('correct');
+    else if(btn === btnEl) btn.classList.add('wrong');
+  });
+
+  feedbackEl.classList.add('show', correct ? 'ok' : 'bad');
+  feedbackEl.textContent = correct ? '¡Correcto!' : 'Incorrecto. La respuesta correcta es: "' + correctText + '".';
+  scoreLabel.textContent = 'Puntos: ' + score;
+  nextRow.classList.add('show');
+}
+
+function nextQuestion(){
+  current++;
+  if(current >= order.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  finalScore.textContent = score + ' / ' + order.length;
+  let msg = '';
+  if(score === order.length) msg = '¡Perfecto! Dominas a, an y the.';
+  else if(score >= order.length * 0.7) msg = '¡Muy bien! Sigue practicando.';
+  else msg = 'Buen intento. Repasa las reglas.';
+  finalMsg.textContent = msg;
+  sendResults();
+}
+
+function sendResults(){
+  if(!SCRIPT_URL || SCRIPT_URL.indexOf('PEGA_AQUI') !== -1){
+    sendingNote.textContent = 'Nota: aún no se configuró el envío automático de resultados.';
+    return;
+  }
+
+  const payload = {
+    name: studentName,
+    email: studentEmail,
+    score: score,
+    total: order.length,
+    answers: answerLog
+  };
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    sendingNote.textContent = 'Tus resultados fueron enviados a tu profesor.';
+  }).catch(() => {
+    sendingNote.textContent = 'No se pudo enviar tu resultado. Avisa a tu profesor.';
+  });
+}
+
+document.getElementById('continue-btn').addEventListener('click', handleContinue);
+document.getElementById('start-btn').addEventListener('click', startQuiz);
+document.getElementById('next-btn').addEventListener('click', nextQuestion);
+</script>
+</body>
+</html>
